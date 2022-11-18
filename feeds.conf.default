@@ -1,0 +1,6 @@
+src-git base https://github.com/openwrt/openwrt.git
+src-include defaults feeds.conf.default
+src-git gl_feed_common https://github.com/gl-inet/gl-feeds.git;common
+src-git gl_feed_21_02 https://github.com/gl-inet/gl-feeds.git^032786d5ff300ebdd83fb1b5fec5344b3da04953
+src-link glinet /home/glinet/work/tmp/gl-sdk4-collect
+src-git mt7981 https://gitlab.com/gl.sdk4.0/gl.router/mt7981-feeds.git^d71aa8cfd5719994b6b0ab1b7d352c5d39b2eb23

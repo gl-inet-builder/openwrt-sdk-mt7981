@@ -1,0 +1,12 @@
+Index: linux-5.4.188/drivers/net/phy/phylink.c
+===================================================================
+--- linux-5.4.188.orig/drivers/net/phy/phylink.c
++++ linux-5.4.188/drivers/net/phy/phylink.c
+@@ -494,7 +494,6 @@ static void phylink_resolve(struct work_
+ 
+ 		case MLO_AN_FIXED:
+ 			phylink_get_fixed_state(pl, &link_state);
+-			phylink_mac_config_up(pl, &link_state);
+ 			break;
+ 
+ 		case MLO_AN_INBAND:

@@ -1,0 +1,13 @@
+#libtls pkg-config source file
+
+prefix=/home/glinet/work/opt/gl-infra-builder/mt7981/staging_dir/host
+exec_prefix=/home/glinet/work/opt/gl-infra-builder/mt7981/staging_dir/host
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: LibreSSL-libtls
+Description: Secure communications using the TLS socket protocol.
+Version: 3.4.3
+Libs: -L${libdir} -ltls
+Libs.private: -lresolv -lpthread  
+Cflags: -I${includedir}

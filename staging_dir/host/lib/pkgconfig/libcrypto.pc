@@ -1,0 +1,13 @@
+#libcrypto pkg-config source file
+
+prefix=/home/glinet/work/opt/gl-infra-builder/mt7981/staging_dir/host
+exec_prefix=/home/glinet/work/opt/gl-infra-builder/mt7981/staging_dir/host
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: LibreSSL-libcrypto
+Description: LibreSSL cryptography library
+Version: 3.4.3
+Libs: -L${libdir} -lcrypto
+Libs.private: -lresolv -lpthread  
+Cflags: -I${includedir}

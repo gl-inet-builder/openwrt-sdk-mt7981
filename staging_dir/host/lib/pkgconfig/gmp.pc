@@ -1,0 +1,11 @@
+prefix=/home/glinet/work/opt/gl-infra-builder/mt7981/staging_dir/host
+exec_prefix=/home/glinet/work/opt/gl-infra-builder/mt7981/staging_dir/host
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: GNU MP
+Description: GNU Multiple Precision Arithmetic Library
+URL: https://gmplib.org
+Version: 6.2.1
+Cflags: -I${includedir}
+Libs: -L${libdir} -lgmp

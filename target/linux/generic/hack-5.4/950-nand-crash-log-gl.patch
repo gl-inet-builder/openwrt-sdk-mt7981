@@ -1,0 +1,58 @@
+Index: linux-5.4.211/drivers/mtd/mtdoops.c
+===================================================================
+--- linux-5.4.211.orig/drivers/mtd/mtdoops.c
++++ linux-5.4.211/drivers/mtd/mtdoops.c
+@@ -186,8 +186,25 @@ static void mtdoops_write(struct mtdoops
+ 	hdr[1] = MTDOOPS_KERNMSG_MAGIC;
+ 
+ 	if (panic) {
+-		ret = mtd_panic_write(mtd, cxt->nextpage * record_size,
+-				      record_size, &retlen, cxt->oops_buf);
++		int count = record_size / 0x800;
++		int i = 0;
++		const u_char * p = cxt->oops_buf;
++		while(count--) {
++			ret = mtd_write(mtd, cxt->nextpage * record_size + i * 0x800,
++				    	  record_size - i * 0x800, &retlen, p);
++			if (ret == 0) {
++				break;
++			}
++			else {
++				if ((p + 0x800) != NULL) {
++					p = p + 0x800;
++					i++;
++				}
++				else  {
++					break;
++				}
++			}
++		}
+ 		if (ret == -EOPNOTSUPP) {
+ 			printk(KERN_ERR "mtdoops: Cannot write from panic without panic_write\n");
+ 			return;
+@@ -195,10 +212,11 @@ static void mtdoops_write(struct mtdoops
+ 	} else
+ 		ret = mtd_write(mtd, cxt->nextpage * record_size,
+ 				record_size, &retlen, cxt->oops_buf);
+-
++#if 0
+ 	if (retlen != record_size || ret < 0)
+ 		printk(KERN_ERR "mtdoops: write failure at %ld (%td of %ld written), error %d\n",
+ 		       cxt->nextpage * record_size, retlen, record_size, ret);
++#endif
+ 	mark_page_used(cxt, cxt->nextpage);
+ 	memset(cxt->oops_buf, 0xff, record_size);
+ 
+@@ -207,10 +225,12 @@ static void mtdoops_write(struct mtdoops
+ 
+ static void mtdoops_workfunc_write(struct work_struct *work)
+ {
++#if 0
+ 	struct mtdoops_context *cxt =
+ 			container_of(work, struct mtdoops_context, work_write);
+ 
+ 	mtdoops_write(cxt, 0);
++#endif
+ }
+ 
+ static void find_next_position(struct mtdoops_context *cxt)

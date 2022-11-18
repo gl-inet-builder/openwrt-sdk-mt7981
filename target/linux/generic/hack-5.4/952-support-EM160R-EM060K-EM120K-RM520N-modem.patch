@@ -1,0 +1,48 @@
+--- linux.origin/drivers/usb/serial/option.c	2022-10-28 19:54:01.695165958 +0800
++++ linux/drivers/usb/serial/option.c	2022-10-28 20:06:22.019295484 +0800
+@@ -623,6 +623,9 @@
+ 	{ USB_DEVICE(0x2C7C, 0x0296) }, /* Quectel BG96 */
+ 	{ USB_DEVICE(0x2C7C, 0x0435) }, /* Quectel AG35 */
+ 	{ USB_DEVICE(0x2C7C, 0x6026) }, /* Quectel EC200t */
++	{ USB_DEVICE(0x2C7C, 0x030b) }, /* Quectel EM060K-GL EM120K-GL*/
++	{ USB_DEVICE(0x2C7C, 0x0620) }, /* Quectel EM160R-GL */
++	{ USB_DEVICE(0x2C7C, 0x0801) }, /* Quectel RM520N-GL */
+ #endif
+ 	{ USB_DEVICE(0x19d2, 0x0536) },/* MZ386 */
+ 	{ USB_DEVICE(0x19d2, 0x0117) },
+@@ -2293,6 +2296,24 @@
+ 			serial->dev->descriptor.idProduct == cpu_to_le16(0x6026) \
+ 			&& serial->interface->cur_altsetting->desc.bInterfaceNumber<= 1)
+ 		return -ENODEV;
++
++	if (serial->dev->descriptor.idVendor == cpu_to_le16(0x2C7C)) { 
++		__u16 idProduct = le16_to_cpu(serial->dev->descriptor.idProduct);
++		struct usb_interface_descriptor *intf = &serial->interface->cur_altsetting->desc; 
++		
++		if (intf->bInterfaceClass != 0xFF || intf->bInterfaceSubClass == 0x42) {
++			//ECM, RNDIS, NCM, MBIM, ACM, UAC, ADB
++			return -ENODEV;
++		}
++
++		if ((idProduct&0xF000) == 0x0000) {
++			//MDM interface 4 is QMI
++			if (intf->bInterfaceNumber == 4 && intf->bNumEndpoints == 3
++					&& intf->bInterfaceSubClass == 0xFF && intf->bInterfaceProtocol == 0xFF)
++				return -ENODEV;
++
++		}
++	}
+ #endif
+ 
+ 	#if 1 //Added by Quectel
+--- linux.origin/drivers/net/usb/qmi_wwan.c	2022-10-28 19:54:01.467166796 +0800
++++ linux/drivers/net/usb/qmi_wwan.c	2022-10-28 20:06:20.839302790 +0800
+@@ -1092,6 +1092,8 @@
+ 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
+ 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0620)},	/* Quectel EM160R-GL */
+ 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0800)},	/* Quectel RM500Q-GL */
++	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x030b)},	/* Quectel Quectel EM060K-GL EM120K-GL */
++	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0801)},	/* Quectel RM520N-GL */
+ 
+ 	/* 3. Combined interface devices matching on interface number */
+ 	{QMI_FIXED_INTF(0x0408, 0xea42, 4)},	/* Yota / Megafon M100-1 */
